@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Inter", sans-serif;
+  src: url("/src/assets/fonts/Inter-VariableFont_slnt\,wght.ttf") format('truetype');
+}
+
+@theme{
+  --color-white: #FFFFFF;
+  --color-black:#000000;
+  --color-grey-500:#5E6E85;
+  --color-grey-300:#ACC1DE;
+  --color-blue-900:#253347;
+  --color-blue500:#345FF6;
+  --color-blue300:#B3D3F1;
+  --color-blue100:#E1E7FE;
+  --gradient-start:#D6FCFE;
+  --gradient-end:#D6E6FE;
+}
+
+@layer base {
+  /* Chrome, Safari, Edge, Opera */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+}
