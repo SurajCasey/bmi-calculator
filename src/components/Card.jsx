@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 const Card = () => {
   const [selected, setSelected] = useState('Metric');
-  const [idealWeight, setIdealWeight] = useState('');
+  const [minIdealWeight, setMinIdealWeight] = useState('');
+  const [maxIdealWeight, setMaxIdealWeight] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
 
@@ -15,43 +16,69 @@ const Card = () => {
   const [bmi, setBmi] = useState(null);
   const [interpretation, setInterpretation] = useState('');
 
-  useEffect(() => {
+useEffect(() => {
     let h, w;
 
     if (selected === 'Metric') {
-      h = parseFloat(heightCm);
-      w = parseFloat(weightKg);
-      if (h > 0 && w > 0) {
-        const heightInMeters = h / 100;
-        const bmiValue = w / (heightInMeters * heightInMeters);
-        setBmi(bmiValue.toFixed(1));
-        setInterpretation(getInterpretation(bmiValue));
-      } else {
-        setBmi(null);
-        setInterpretation('');
-      }
+        h = parseFloat(heightCm);
+        w = parseFloat(weightKg);
+
+        if (h > 0 && w > 0) {
+            const heightInMeters = h / 100;
+            const bmiValue = w / (heightInMeters * heightInMeters);
+            setBmi(bmiValue.toFixed(1));
+            setInterpretation(getInterpretation(bmiValue));
+
+            // Ideal weight range (metric)
+            const minKg = 18.5 * (heightInMeters ** 2);
+            const maxKg = 24.9 * (heightInMeters ** 2);
+            setMinIdealWeight(`${minKg.toFixed(1)} kg`);
+            setMaxIdealWeight(`${maxKg.toFixed(1)} kg`);
+        } else {
+            setBmi(null);
+            setInterpretation('');
+            setMinIdealWeight('');
+            setMaxIdealWeight('');
+        }
+
     } else {
-      // Imperial: combine feet+inches, stone+pounds
-      const ft = parseFloat(feet) || 0;
-      const inch = parseFloat(inches) || 0;
-      const st = parseFloat(stone) || 0;
-      const lb = parseFloat(pounds) || 0;
+        // Imperial: combine feet+inches, stone+pounds
+        const ft = parseFloat(feet) || 0;
+        const inch = parseFloat(inches) || 0;
+        const st = parseFloat(stone) || 0;
+        const lb = parseFloat(pounds) || 0;
 
-      // Convert height to total inches
-      h = ft * 12 + inch;
-      // Convert weight to total pounds
-      w = st * 14 + lb;
+        // Convert height to total inches
+        h = ft * 12 + inch;
+        // Convert weight to total pounds
+        w = st * 14 + lb;
 
-      if (h > 0 && w > 0) {
-        const bmiValue = (w * 703) / (h * h);
-        setBmi(bmiValue.toFixed(1));
-        setInterpretation(getInterpretation(bmiValue));
-      } else {
-        setBmi(null);
-        setInterpretation('');
-      }
+        if (h > 0 && w > 0) {
+            const bmiValue = (w * 703) / (h * h);
+            setBmi(bmiValue.toFixed(1));
+            setInterpretation(getInterpretation(bmiValue));
+
+            // Ideal weight range (imperial)
+            const minLbs = 18.5 * (h * h) / 703;
+            const maxLbs = 24.9 * (h * h) / 703;
+
+            // Convert lbs → st & lbs
+            const minSt = Math.floor(minLbs / 14);
+            const minLbRem = Math.round(minLbs % 14);
+            const maxSt = Math.floor(maxLbs / 14);
+            const maxLbRem = Math.round(maxLbs % 14);
+
+            setMinIdealWeight(`${minSt} st ${minLbRem} lbs`);
+            setMaxIdealWeight(`${maxSt} st ${maxLbRem} lbs`);
+        } else {
+            setBmi(null);
+            setInterpretation('');
+            setMinIdealWeight('');
+            setMaxIdealWeight('');
+        }
     }
-  }, [selected, heightCm, weightKg, feet, inches, stone, pounds]);
+}, [selected, heightCm, weightKg, feet, inches, stone, pounds]);
+
 
   const getInterpretation = (bmi) => {
     if (bmi < 18.5) return 'Underweight';
@@ -59,6 +86,9 @@ const Card = () => {
     if (bmi >= 25 && bmi < 30) return 'Overweight';
     return 'Obese';
   };
+
+  
+  
 
   // Reset all inputs on unit change
   const onUnitChange = (unit) => {
@@ -222,7 +252,7 @@ const Card = () => {
             </div>
             <div className='w-1/2 max-sm:w-full'>
                 Your BMI suggests you’re a {interpretation}. 
-                Your ideal weight is between {idealWeight}.
+                Your ideal weight is between {minIdealWeight} and {maxIdealWeight}.
             </div>
           </div>
         ) : (
