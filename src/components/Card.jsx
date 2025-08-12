@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const Card = () => {
   const [selected, setSelected] = useState('Metric');
+  const [idealWeight, setIdealWeight] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
 
@@ -221,7 +222,7 @@ const Card = () => {
             </div>
             <div className='w-1/2 max-sm:w-full'>
                 Your BMI suggests you’re a {interpretation}. 
-                Your ideal weight is between 
+                Your ideal weight is between {idealWeight}.
             </div>
           </div>
         ) : (
